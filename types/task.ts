@@ -13,7 +13,7 @@ export interface TaskFormData {
   title: string;
   description?: string;
   priority: 'low' | 'medium' | 'high';
-  dueDate?: Date;
+  dueDate?: string;
 }
 
 export type TaskFilter = 'all' | 'pending' | 'completed';
