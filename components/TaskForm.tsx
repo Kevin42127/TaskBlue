@@ -27,7 +27,6 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task }: TaskFormPr
 
     const taskData: TaskFormData = {
       ...formData,
-      dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined,
     };
 
     onSubmit(taskData);

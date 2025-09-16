@@ -136,7 +136,10 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   const addTask = (taskData: TaskFormData) => {
     const newTask: Task = {
       id: Date.now().toString(),
-      ...taskData,
+      title: taskData.title,
+      description: taskData.description,
+      priority: taskData.priority,
+      dueDate: taskData.dueDate ? new Date(taskData.dueDate) : undefined,
       completed: false,
       createdAt: new Date(),
       updatedAt: new Date(),
