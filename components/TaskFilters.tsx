@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { TaskFilter, TaskSort } from '@/types/task';
 import SortSelect from './SortSelect';
+import { useI18n } from '@/context/I18nContext';
 
 interface TaskFiltersProps {
   filter: TaskFilter;
@@ -11,14 +12,16 @@ interface TaskFiltersProps {
   onSortChange: (sort: TaskSort) => void;
 }
 
-const filterOptions: { value: TaskFilter; label: string }[] = [
-  { value: 'all', label: '全部任務' },
-  { value: 'pending', label: '待完成' },
-  { value: 'completed', label: '已完成' },
+const filterOptionsBase: { value: TaskFilter; labelKey: string }[] = [
+  { value: 'all', labelKey: 'taskFilters.all' },
+  { value: 'pending', labelKey: 'taskFilters.pending' },
+  { value: 'completed', labelKey: 'taskFilters.completed' },
 ];
 
 
 export default function TaskFilters({ filter, sort, onFilterChange, onSortChange }: TaskFiltersProps) {
+  const { t } = useI18n();
+  const filterOptions = filterOptionsBase.map(opt => ({ value: opt.value, label: t(opt.labelKey) }));
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -45,7 +48,7 @@ export default function TaskFilters({ filter, sort, onFilterChange, onSortChange
         </div>
 
         <div className="flex items-center space-x-1">
-          <label className="text-sm font-medium text-gray-700">排序方式：</label>
+          <label className="text-sm font-medium text-gray-700">{t('taskFilters.sortBy')}</label>
           <SortSelect
             value={sort}
             onChange={onSortChange}

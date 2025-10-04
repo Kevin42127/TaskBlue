@@ -3,25 +3,28 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { TaskSort } from '@/types/task';
+import { useI18n } from '@/context/I18nContext';
 
 interface SortSelectProps {
   value: TaskSort;
   onChange: (value: TaskSort) => void;
 }
 
-const sortOptions = [
-  { value: 'createdAt' as TaskSort, label: '建立日期' },
-  { value: 'dueDate' as TaskSort, label: '截止日期' },
-  { value: 'priority' as TaskSort, label: '優先級' },
-  { value: 'title' as TaskSort, label: '標題' },
+const sortOptionsBase = [
+  { value: 'createdAt' as TaskSort, labelKey: 'sort.createdAt' },
+  { value: 'dueDate' as TaskSort, labelKey: 'sort.dueDate' },
+  { value: 'priority' as TaskSort, labelKey: 'sort.priority' },
+  { value: 'title' as TaskSort, labelKey: 'sort.title' },
 ];
 
 export default function SortSelect({ value, onChange }: SortSelectProps) {
+  const { t } = useI18n();
+  const sortOptions = sortOptionsBase.map(opt => ({ value: opt.value, label: t(opt.labelKey) }));
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = sortOptions.find(option => option.value === value);
-  const displayText = selectedOption?.label || '建立日期';
+  const displayText = selectedOption?.label || t('sort.createdAt');
 
   const handleOptionClick = (optionValue: TaskSort) => {
     onChange(optionValue);

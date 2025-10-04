@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import 'react-datepicker/dist/react-datepicker.css'
+import { I18nProvider } from '@/context/I18nContext'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,11 +23,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="zh-TW">
+    <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gray-50">
-          {children}
-        </div>
+        <I18nProvider>
+          <div className="min-h-screen bg-gray-50">
+            {children}
+          </div>
+        </I18nProvider>
       </body>
     </html>
   )

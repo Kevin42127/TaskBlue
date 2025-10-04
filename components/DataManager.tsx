@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
+import { useI18n } from '@/context/I18nContext';
 import { useState, useRef } from 'react';
 import { X, Download, Upload, Trash2, Database, AlertCircle } from 'lucide-react';
 import { useTasks } from '@/context/TaskContext';
@@ -13,6 +14,7 @@ interface DataManagerProps {
 }
 
 export default function DataManager({ isOpen, onClose }: DataManagerProps) {
+  const { locale, t } = useI18n();
   const { exportTasks, importTasks, clearAllTasks, hasStoredData, getStorageInfo } = useTasks();
   const [isImporting, setIsImporting] = useState(false);
   const [importError, setImportError] = useState<string | null>(null);
@@ -52,11 +54,11 @@ export default function DataManager({ isOpen, onClose }: DataManagerProps) {
 
   const handleClearData = async () => {
     const confirmed = await confirm({
-      title: '清除所有資料',
-      message: '確定要清除所有任務資料嗎？此操作無法復原！',
+      title: t('dataManager.clearConfirmTitle'),
+      message: t('dataManager.clearConfirmMessage'),
       type: 'danger',
-      confirmText: '清除',
-      cancelText: '取消',
+      confirmText: t('common.clear'),
+      cancelText: t('common.cancel'),
     });
 
     if (confirmed) {
@@ -90,7 +92,7 @@ export default function DataManager({ isOpen, onClose }: DataManagerProps) {
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900 flex items-center">
                 <Database className="h-5 w-5 mr-2" />
-                資料管理
+                {t('header.dataManager')}
               </h2>
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -104,37 +106,37 @@ export default function DataManager({ isOpen, onClose }: DataManagerProps) {
             <div className="p-6 space-y-6">
               {/* 儲存資訊 */}
               <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">儲存資訊</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-2">{t('dataManager.storageInfo')}</h3>
                 <div className="text-sm text-gray-600 space-y-1">
-                  <p>任務數量: {storageInfo.taskCount} 個</p>
+                  <p>{t('dataManager.taskCount')} {storageInfo.taskCount} {t('common.tasksSuffix')}</p>
                   {storageInfo.lastSaved && (
-                    <p>最後儲存: {new Date(storageInfo.lastSaved).toLocaleString('zh-TW')}</p>
+          <p>{t('dataManager.lastSaved')} {new Date(storageInfo.lastSaved).toLocaleString(locale === 'en' ? 'en-US' : 'zh-TW')}</p>
                   )}
                   <p className="text-xs text-gray-500">
-                    資料自動儲存在瀏覽器的本地儲存中
+                    {t('dataManager.autoSaveNote')}
                   </p>
                 </div>
               </div>
 
               {/* 匯出功能 */}
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-3">匯出資料</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">{t('dataManager.exportTitle')}</h3>
                 <motion.button
                   whileTap={{ scale: 0.98 }}
                   onClick={handleExport}
                   className="w-full flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
                 >
                   <Download className="h-4 w-4" />
-                  <span>匯出為 JSON 檔案</span>
+                  <span>{t('dataManager.exportJson')}</span>
                 </motion.button>
                 <p className="text-xs text-gray-500 mt-2">
-                  將所有任務資料匯出為 JSON 格式的備份檔案
+                  {t('dataManager.exportDescription')}
                 </p>
               </div>
 
               {/* 匯入功能 */}
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-3">匯入資料</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">{t('dataManager.importTitle')}</h3>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -149,10 +151,10 @@ export default function DataManager({ isOpen, onClose }: DataManagerProps) {
                   className="w-full flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
                 >
                   <Upload className="h-4 w-4" />
-                  <span>{isImporting ? '匯入中...' : '從 JSON 檔案匯入'}</span>
+                  <span>{isImporting ? t('dataManager.importing') : t('dataManager.importJson')}</span>
                 </motion.button>
                 <p className="text-xs text-gray-500 mt-2">
-                  從備份檔案匯入任務資料（會覆蓋現有資料）
+                  {t('dataManager.importDescription')}
                 </p>
                 {importError && (
                   <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
@@ -166,17 +168,17 @@ export default function DataManager({ isOpen, onClose }: DataManagerProps) {
 
               {/* 清除資料 */}
               <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-3">清除資料</h3>
+                <h3 className="text-sm font-medium text-gray-700 mb-3">{t('dataManager.clearTitle')}</h3>
                 <motion.button
                   whileTap={{ scale: 0.98 }}
                   onClick={handleClearData}
                   className="w-full flex items-center justify-center space-x-2 bg-red-600 hover:bg-red-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200"
                 >
                   <Trash2 className="h-4 w-4" />
-                  <span>清除所有任務</span>
+                  <span>{t('dataManager.clearAllTasks')}</span>
                 </motion.button>
                 <p className="text-xs text-gray-500 mt-2">
-                  永久刪除所有任務資料（無法復原）
+                  {t('dataManager.clearDescription')}
                 </p>
               </div>
 
@@ -187,7 +189,7 @@ export default function DataManager({ isOpen, onClose }: DataManagerProps) {
                   onClick={onClose}
                   className="w-full btn-secondary"
                 >
-                  關閉
+                  {t('common.close')}
                 </motion.button>
               </div>
             </div>

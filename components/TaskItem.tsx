@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { Task } from '@/types/task';
 import { Check, Edit, Trash2, Calendar, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
+import { enUS, zhTW } from 'date-fns/locale';
+import { useI18n } from '@/context/I18nContext';
 
 interface TaskItemProps {
   task: Task;
@@ -13,6 +15,7 @@ interface TaskItemProps {
 }
 
 export default function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemProps) {
+  const { t, locale } = useI18n();
   const getPriorityColor = (priority: Task['priority']) => {
     switch (priority) {
       case 'high':
@@ -29,11 +32,11 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemP
   const getPriorityText = (priority: Task['priority']) => {
     switch (priority) {
       case 'high':
-        return '高';
+        return t('taskItem.priority.high');
       case 'medium':
-        return '中';
+        return t('taskItem.priority.medium');
       case 'low':
-        return '低';
+        return t('taskItem.priority.low');
       default:
         return priority;
     }
@@ -53,6 +56,8 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemP
   };
 
   const isOverdue = task.dueDate && new Date() > task.dueDate && !task.completed;
+  const dateFormat = locale === 'en' ? 'MMM dd, yyyy' : 'yyyy年MM月dd日';
+  const dateLocale = locale === 'en' ? enUS : zhTW;
 
   return (
     <motion.div
@@ -116,12 +121,12 @@ export default function TaskItem({ task, onToggle, onEdit, onDelete }: TaskItemP
               {task.dueDate && (
                 <div className={`flex items-center space-x-1 ${isOverdue ? 'text-red-600' : ''}`}>
                   <Calendar className="h-4 w-4" />
-                  <span>{format(task.dueDate, 'yyyy年MM月dd日')}</span>
+                  <span>{format(task.dueDate, dateFormat, { locale: dateLocale })}</span>
                 </div>
               )}
               <div className="flex items-center space-x-1">
-                <span>建立於</span>
-                <span>{format(task.createdAt, 'yyyy年MM月dd日')}</span>
+                <span>{t('taskItem.createdOn')}</span>
+                <span>{format(task.createdAt, dateFormat, { locale: dateLocale })}</span>
               </div>
             </div>
 

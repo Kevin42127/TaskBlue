@@ -2,9 +2,13 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
+import { format } from 'date-fns';
+import { enUS, zhTW } from 'date-fns/locale';
+import DatePicker from 'react-datepicker';
 import { X } from 'lucide-react';
 import { Task, TaskFormData } from '@/types/task';
 import PrioritySelect from './PrioritySelect';
+import { useI18n } from '@/context/I18nContext';
 
 interface TaskFormProps {
   isOpen: boolean;
@@ -14,6 +18,7 @@ interface TaskFormProps {
 }
 
 export default function TaskForm({ isOpen, onClose, onSubmit, task }: TaskFormProps) {
+  const { t, locale } = useI18n();
   const [formData, setFormData] = useState<TaskFormData>({
     title: task?.title || '',
     description: task?.description || '',
@@ -69,7 +74,7 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task }: TaskFormPr
           >
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-900">
-                {task ? '編輯任務' : '新增任務'}
+                {task ? t('taskForm.editTitle') : t('taskForm.addTitle')}
               </h2>
               <motion.button
                 whileTap={{ scale: 0.9 }}
@@ -83,7 +88,7 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task }: TaskFormPr
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
                 <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                  標題 *
+                  {t('taskForm.titleLabel')}
                 </label>
                 <input
                   type="text"
@@ -91,27 +96,27 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task }: TaskFormPr
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   className="input-field"
-                  placeholder="輸入任務標題"
+                  placeholder={t('taskForm.titlePlaceholder')}
                   required
                 />
               </div>
 
               <div>
                 <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                  描述
+                  {t('taskForm.descriptionLabel')}
                 </label>
                 <textarea
                   id="description"
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="input-field resize-none h-20"
-                  placeholder="輸入任務描述"
+                  placeholder={t('taskForm.descriptionPlaceholder')}
                 />
               </div>
 
               <div>
                 <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
-                  優先級
+                  {t('taskForm.priorityLabel')}
                 </label>
                 <PrioritySelect
                   value={formData.priority}
@@ -121,16 +126,24 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task }: TaskFormPr
 
               <div>
                 <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-1">
-                  截止日期
+                  {t('taskForm.dueDateLabel')}
                 </label>
-                <input
-                  type="date"
+                <DatePicker
                   id="dueDate"
-                  value={formData.dueDate}
-                  onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                  selected={formData.dueDate ? new Date(formData.dueDate) : null}
+                  onChange={(date) => setFormData({ ...formData, dueDate: date ? format(date as Date, 'yyyy-MM-dd') : undefined })}
                   className="w-full px-3 py-2 border border-gray-300 bg-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors duration-200"
-                  style={{ colorScheme: 'light' }}
+                  placeholderText={locale === 'en' ? 'Select date' : '選擇日期'}
+                  locale={locale === 'en' ? enUS : zhTW}
+                  dateFormat={locale === 'en' ? 'MMM dd, yyyy' : 'yyyy/MM/dd'}
+                  isClearable
+                  popperPlacement="bottom"
                 />
+                {formData.dueDate && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    {format(new Date(formData.dueDate + 'T00:00:00'), locale === 'en' ? 'MMM dd, yyyy' : 'yyyy年MM月dd日', { locale: locale === 'en' ? enUS : zhTW })}
+                  </p>
+                )}
               </div>
 
               <div className="flex justify-end space-x-3 pt-4">
@@ -140,14 +153,14 @@ export default function TaskForm({ isOpen, onClose, onSubmit, task }: TaskFormPr
                   onClick={handleClose}
                   className="btn-secondary"
                 >
-                  取消
+                  {t('common.cancel')}
                 </motion.button>
                 <motion.button
                   type="submit"
                   whileTap={{ scale: 0.95 }}
                   className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200"
                 >
-                  {task ? '更新任務' : '新增任務'}
+                  {task ? t('taskForm.update') : t('taskForm.create')}
                 </motion.button>
               </div>
             </form>

@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Task } from '@/types/task';
 import TaskItem from './TaskItem';
+import { useI18n } from '@/context/I18nContext';
 
 interface TaskListProps {
   tasks: Task[];
@@ -12,6 +13,7 @@ interface TaskListProps {
 }
 
 export default function TaskList({ tasks, onToggle, onEdit, onDelete }: TaskListProps) {
+  const { t } = useI18n();
   if (tasks.length === 0) {
     return (
       <motion.div
@@ -35,11 +37,11 @@ export default function TaskList({ tasks, onToggle, onEdit, onDelete }: TaskList
             />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-2">找不到任務</h3>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">{t('taskList.emptyTitle')}</h3>
         <p className="text-gray-500">
           {tasks.length === 0
-            ? "您還沒有任何任務。建立您的第一個任務開始使用吧！"
-            : '請嘗試調整搜尋或篩選條件。'}
+            ? t('taskList.emptyMessageNoTasks')
+            : t('taskList.emptyMessageAdjust')}
         </p>
       </motion.div>
     );

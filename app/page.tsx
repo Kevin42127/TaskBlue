@@ -12,8 +12,10 @@ import ConfirmDialog from '@/components/ConfirmDialog';
 import { useConfirm } from '@/hooks/useConfirm';
 import { Task } from '@/types/task';
 import TaskBlueImageLogo from '@/components/TaskBlueImageLogo';
+import { useI18n } from '@/context/I18nContext';
 
 function TaskManager() {
+  const { t } = useI18n();
   const {
     state,
     addTask,
@@ -51,11 +53,11 @@ function TaskManager() {
 
   const handleDeleteTask = async (id: string) => {
     const confirmed = await confirm({
-      title: '刪除任務',
-      message: '確定要刪除這個任務嗎？此操作無法復原。',
+      title: t('confirm.deleteTaskTitle'),
+      message: t('confirm.deleteTaskMessage'),
       type: 'danger',
-      confirmText: '刪除',
-      cancelText: '取消',
+      confirmText: t('common.delete'),
+      cancelText: t('common.cancel'),
     });
 
     if (confirmed) {
@@ -84,11 +86,11 @@ function TaskManager() {
             <div className="flex items-center space-x-4 mb-4">
               <TaskBlueImageLogo size="lg" showText={false} />
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                  歡迎使用 TaskBlue
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                  {t('page.welcomeTitle')}
                 </h2>
                 <p className="text-gray-600">
-                  使用 TaskBlue 高效管理您的日常任務，享受簡約現代的任務管理體驗。
+                  {t('page.welcomeText')}
                 </p>
               </div>
             </div>
@@ -104,12 +106,12 @@ function TaskManager() {
           <div className="mb-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold text-gray-900">
-                {state.filter === 'all' && '全部任務'}
-                {state.filter === 'pending' && '待完成任務'}
-                {state.filter === 'completed' && '已完成任務'}
+                {state.filter === 'all' && t('page.tasks.all')}
+                {state.filter === 'pending' && t('page.tasks.pending')}
+                {state.filter === 'completed' && t('page.tasks.completed')}
               </h3>
               <span className="text-sm text-gray-500">
-                {filteredTasks.length} 個任務
+                {filteredTasks.length} {t('common.tasksSuffix')}
               </span>
             </div>
           </div>

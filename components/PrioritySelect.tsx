@@ -3,24 +3,25 @@
 import { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Task } from '@/types/task';
+import { useI18n } from '@/context/I18nContext';
 
 interface PrioritySelectProps {
   value: Task['priority'];
   onChange: (value: Task['priority']) => void;
 }
 
-const priorityOptions = [
-  { value: 'low' as Task['priority'], label: '低' },
-  { value: 'medium' as Task['priority'], label: '中' },
-  { value: 'high' as Task['priority'], label: '高' },
-];
-
 export default function PrioritySelect({ value, onChange }: PrioritySelectProps) {
+  const { t } = useI18n();
+  const priorityOptions = [
+    { value: 'low' as Task['priority'], label: t('taskItem.priority.low') },
+    { value: 'medium' as Task['priority'], label: t('taskItem.priority.medium') },
+    { value: 'high' as Task['priority'], label: t('taskItem.priority.high') },
+  ];
   const [isOpen, setIsOpen] = useState(false);
   const selectRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = priorityOptions.find(option => option.value === value);
-  const displayText = selectedOption?.label || '中';
+  const displayText = selectedOption?.label || t('taskItem.priority.medium');
 
   const handleOptionClick = (optionValue: Task['priority']) => {
     onChange(optionValue);
